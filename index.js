@@ -3,7 +3,8 @@ const { APIMessage } = require('discord.js');
 const {readdirSync} = require('fs');
 const config = require('./config.json');
 const fs = require('fs')
-
+const keepAlive = require("./server.js")
+keepAlive()
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 
