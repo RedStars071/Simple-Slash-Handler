@@ -1,12 +1,12 @@
-const Discord = require('discord.js');
+const { Client, Collection } = require('discord.js');
 const { APIMessage } = require('discord.js');
 const {readdirSync} = require('fs');
 const config = require('./config.json');
 const fs = require('fs')
 const keepAlive = require("./server.js")
 keepAlive()
-const client = new Discord.Client();
-client.commands = new Discord.Collection();
+const client = new Client();
+client.commands = new Collection();
 
 client.once('ready', async () => {
 
@@ -16,25 +16,25 @@ client.once('ready', async () => {
     readdirSync('./commands').forEach(dir => {
       const commandFiles = readdirSync(`./commands/${dir}`).filter(file => file.endsWith('.js'));
       for (const file of commandFiles) {
-        const command = require(`./commands/${dir}/${file}`);
+        const commandSlash = require(`./commands/${dir}/${file}`);
         client.api.applications(client.user.id).guilds(config.guildID).commands.post({
           data: {
-            name: command.name,
-            description: command.description,
-            options: command.commandOptions
+            name: commandSlash.name,
+            description: commandSlash.description,
+            options: commandSlash.commandOptions
           }
         })
-        if (command.global == true) {
+        if (commandSlash.global == true) {
           client.api.applications(client.user.id).commands.post({
             data: {
-              name: command.name,
-              description: command.description,
-              options: command.commandOptions
-            }
+            name: commandSlash.name,
+            description: commandSlash.description,
+            options: commandSlash.commandOptions
+          }
           })
         }
 
-        client.commands.set(command.name, command);
+        client.commands.set(commandSlash.name, commandSlash);
         console.log(`Command POST : ${command.name} from ${file} (${command.global ? "global" : "guild"})`)
       }
       console.log("")
