@@ -62,9 +62,15 @@ client.once('ready', async () => {
 client.ws.on('INTERACTION_CREATE', async interaction => {
 
   if (!client.intcommands.has(interaction.data.name)) return;
+const commandName = interaction.data.name.toLowerCase();
 
+        // Read the options and mark them as arguments
+        const args = interaction.data.options;
+
+        // Get the command from the collection
+        const command = client.intcommands.get(commandName)
   try {
-    client.intcommands.get(interaction.data.name).run(interaction, client);
+command.run(interaction, client);
   } catch (error) {
     console.log(`Error from command ${interaction.data.name} : ${error.message}`);
     console.log(`${error.stack}\n`)
