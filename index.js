@@ -16,7 +16,7 @@ client.once('ready', async () => {
     readdirSync('./ints').forEach(dir => {
       const commandFiles = readdirSync(`./ints/${dir}`).filter(file => file.endsWith('.js'));
       for (const file of commandFiles) {
-        const commandSlash = require(`./commands/${dir}/${file}`);
+        const commandSlash = require(`./ints/${dir}/${file}`);
         client.api.applications(client.user.id).guilds(config.guildID).commands.post({
           data: {
             name: commandSlash.name,
