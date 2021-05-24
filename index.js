@@ -6,15 +6,15 @@ const fs = require('fs')
 const keepAlive = require("./server.js")
 keepAlive()
 const client = new Client();
-client.commands = new Collection();
+client.intcommands = new Collection();
 
 client.once('ready', async () => {
 
   console.log(`\nLogged in : ${client.user.tag}\n`)
 
   try {
-    readdirSync('./commands').forEach(dir => {
-      const commandFiles = readdirSync(`./commands/${dir}`).filter(file => file.endsWith('.js'));
+    readdirSync('./ints').forEach(dir => {
+      const commandFiles = readdirSync(`./ints/${dir}`).filter(file => file.endsWith('.js'));
       for (const file of commandFiles) {
         const commandSlash = require(`./commands/${dir}/${file}`);
         client.api.applications(client.user.id).guilds(config.guildID).commands.post({
@@ -34,7 +34,7 @@ client.once('ready', async () => {
           })
         }
 
-        client.commands.set(commandSlash.name, commandSlash);
+        client.intcommands.set(commandSlash.name, commandSlash);
         console.log(`Command POST : ${command.name} from ${file} (${command.global ? "global" : "guild"})`)
       }
       console.log("")
@@ -61,10 +61,10 @@ client.once('ready', async () => {
 
 client.ws.on('INTERACTION_CREATE', async interaction => {
 
-  if (!client.commands.has(interaction.data.name)) return;
+  if (!client.intcommands.has(interaction.data.name)) return;
 
   try {
-    client.commands.get(interaction.data.name).execute(interaction, client);
+    client.intcommands.get(interaction.data.name).run(interaction, client);
   } catch (error) {
     console.log(`Error from command ${interaction.data.name} : ${error.message}`);
     console.log(`${error.stack}\n`)
